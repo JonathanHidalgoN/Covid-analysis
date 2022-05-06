@@ -102,7 +102,7 @@ class Population():
                           {"title": "Relación entre recuperados e inmunes",
                             "x": "Inmunes acumulados", "y": "Recuperados acumulados"})
     else : pass
-    return(rho,rho_varianza)
+    return(rho,rho_error)
 
   def inmune_dead_relation(self,graph=None):
     dias_de_ajuste_delta = dias_de_ajuste_optimo(self.inmune_people[:],
@@ -125,7 +125,7 @@ class Population():
                             "x": "Inmunes acumulados", "y": "Difuntos acumulados"})
       plt.show()
     else :pass
-    return(delta,delta_varianza)
+    return(delta,delta_error)
     
     
   def vaccunation_vel(self,graph=None):
@@ -155,9 +155,3 @@ class Population():
       plt.plot(eje_vac,v_vacunacion[0]*eje_vac+v_vacunacion[1])
     else : pass
     return(v_vacunacion,v_vacunacion_error)
-    
-
-
-
-
-  

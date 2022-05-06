@@ -1,13 +1,12 @@
-import pstats
 from Functions import *
 from Rates import Population
 # Para realizar productos cartesianos de muchas listas
 from itertools import product
-
+from scipy.stats import t
 
 
 # Se lee la base de datos
-f = "Covid-analysis\GtoDatOK150322 - GtoDatOK291020.csv"
+f = "GtoDatOK150322 - GtoDatOK291020.csv"
 df = pd.read_csv(f, header=1) #Para Guanajuato: 1; Para México: 0
 df.head()
 
@@ -57,12 +56,12 @@ beta, beta_error=Poblacion.transmition_rate_S(gamma)
 rho, rho_error=Poblacion.inmune_recovered_relation()
 delta, delta_error=Poblacion.inmune_dead_relation()
 parametros_vacuna,vacuna_error=Poblacion.vaccunation_vel()
-rho_error=rho_error[0]
-delta_error=delta_error[0]
+
+
 
 # Parámetros del sistema
 poblacion_total = 6.0e6 #Para Guanajuato: 6.0e6; Para México: 128.9e6
-tasa_deteccion = 0.0906
+tasa_deteccion = 0.1
 tasa_deteccion_error = 0.0296
 
 # Parámetros del análisis
@@ -106,6 +105,7 @@ inmunes_confianza, inmunes_prediccion = intervalos_confianza_prediccion(periodo_
                                                                               3)
 # Cotas óptimas
 menos_cero_mas = np.array(range(-1,2))
+
 
 # Vectores de incertidumbres
 Gamma = gamma + np.multiply(gamma_error, menos_cero_mas)
@@ -153,7 +153,7 @@ for inf, inm, g, b0, b1, k in product(Infectados, Inmunes, Gamma,
   tendencia_prediccion = (pred_inm[-1]-inmunes_acumulados[-1])/dias_a_predecir
 
   condicion_arriba_inm = (tendencia_prediccion<np.log2(dias_a_predecir)*tendencia_inmunes and inmunes_predichos[-1]<=pred_inm[-1])
-  condicion_abajo_inm = (inmunes_predichos[-1]>=pred_inm[-1] and vector_menor_que_vector(np.zeros(len(pred_inm))-1, pred_inm))
+  condicion_abajo_inm =  inmunes_predichos[-1]>=pred_inm[-1] and vector_menor_que_vector(np.zeros(len(pred_inm))-1, pred_inm)
   if condicion_arriba_inm or condicion_abajo_inm: 
 
     # Se definen los errores de esa predicción
@@ -177,9 +177,15 @@ for inf, inm, g, b0, b1, k in product(Infectados, Inmunes, Gamma,
   tendencia_infectados = (infectados_activos[-1]-infectados_activos[-dias_de_analisis])/dias_de_analisis
   tendencia_prediccion = (pred_inf[-1]-infectados_activos[-1])/dias_a_predecir
 
-# HIPOTESIS: EL LOGARITMO NO NECESARIAMENTE ES LOG2, SINO LOG BASE R_0
-  
- 
+  ######################################################################
+  ######################################################################
+  ######################################################################
+  ######################################################################
+  # HIPOTESIS: EL LOGARITMO NO NECESARIAMENTE ES LOG2, SINO LOG BASE R_0
+  ######################################################################
+  ######################################################################
+  ######################################################################
+  ######################################################################
   condicion_arriba_inf = (abs(tendencia_prediccion)<np.log2(dias_a_predecir)*abs(tendencia_infectados) and infectados_predichos[-1]<=pred_inf[-1])
   condicion_abajo_inf = (infectados_predichos[-1]>=pred_inf[-1] and (vector_menor_que_vector(np.zeros(len(pred_inf))-1, pred_inf)))
   if condicion_arriba_inf or condicion_abajo_inf: 
@@ -198,6 +204,14 @@ for inf, inm, g, b0, b1, k in product(Infectados, Inmunes, Gamma,
       error_inf_down = temp_inf
 
 reporte_eje_x = np.array( range(numero_datos-30, numero_datos) )
+
+
+#infectados_cota_superior,infectados_cota_inferior = confidence_interval_experimental(infectados_predichos)
+#recuperados_predichos = rho[0]*inmunes_predichos+rho[1]
+#difuntos_predichos = delta[0]*inmunes_predichos+delta[1]
+#recuperados_cota_superior , recuperados_cota_inferior = confidence_interval_experimental(recuperados_predichos)
+#difuntos_cota_superior , difuntos_cota_inferior = confidence_interval_experimental(difuntos_predichos)
+
 
 if dias_de_corte>0:
   predicciones_graficas(reporte_eje_x, infectados_activos,
@@ -227,20 +241,20 @@ else:
                       {"nombre": "Recovered",
                        "escala": rho,
                        "error": rho_error})
-if dias_de_corte>0:
+if dias_de_corte>0: 
+  predicciones_graficas(reporte_eje_x, recuperados_acumulados,
+                      inmunes_cota_inferior, inmunes_predichos,
+                      inmunes_cota_superior, periodo_de_prediccion,
+                      {"nombre": "Recovered",
+                       "escala": rho,
+                       "error": rho_error},
+                      valores_comparacion=valores_reales["Recuperados"],
+                      dias_extra=0)
+else:
   predicciones_graficas(reporte_eje_x, difuntos_acumulados,
                       inmunes_cota_inferior, inmunes_predichos,
                       inmunes_cota_superior, periodo_de_prediccion,
-                      {"nombre": "Deceased",
-                       "escala": delta,
-                       "error": delta_error},
-                      valores_comparacion=valores_reales["Difuntos"],
-                      dias_extra=dias_a_predecir)
-else:
-    predicciones_graficas(reporte_eje_x, difuntos_acumulados,
-                      inmunes_cota_inferior, inmunes_predichos,
-                      inmunes_cota_superior, periodo_de_prediccion,
-                      {"nombre": "Deceased",
+                      {"nombre": "Recovered",
                        "escala": delta,
                        "error": delta_error})
 rho_up = rho+rho_error

@@ -1,6 +1,9 @@
 # Para análisis de datos
 import pandas as pd
 import numpy as np
+from scipy.stats import t
+import scipy.stats as st
+
 
 # Para hacer ajustes de curvas
 from scipy.optimize import curve_fit
@@ -144,7 +147,7 @@ def resolver_SIR(infectados_iniciales, inmunes_iniciales, gamma, beta_S, Kay, N,
     #Se calcula el factor escala del término beta_S,
     #dado el valor local de la tasa de detección
     escala = ( 1 - (I+R_tilde) ) / ( 1 - Kay*( I+R_tilde ) )
-    escala = 1 ###
+    
 
     #Se definen las expresiones de las ecuaciones del modelo SIR
     dI_dt = escala * np.exp( beta_S(x) )*I - gamma*I
@@ -172,8 +175,10 @@ def resolver_SIR(infectados_iniciales, inmunes_iniciales, gamma, beta_S, Kay, N,
 
 
 #Función para graficar resultados
-def predicciones_graficas(eje_x, datos, cota_inferior, prediccion, cota_superior, periodo, etiquetas,ultima_fecha):
+def predicciones_graficas(eje_x, datos, cota_inferior, prediccion, cota_superior, periodo, etiquetas,ultima_fecha=None):
+    
     numero_datos = len(datos)
+    if ultima_fecha is None : ultima_fecha = numero_datos 
     fig, ax = plt.subplots()
 
     try:
@@ -197,12 +202,13 @@ def predicciones_graficas(eje_x, datos, cota_inferior, prediccion, cota_superior
         
         ax.fill_between(periodo, pendiente_down*cota_inferior+interseccion_down,
                         pendiente_up*cota_superior+interseccion_up, color="#1761B0",
-                        edgecolor="0.5", label="Cotas", alpha=0.25)
+                        edgecolor="0.5", label="Error bounds", alpha=0.25)
         
         ax.fill_between(periodo, pendiente_down*prediccion+interseccion_down,
                         pendiente_up*prediccion+interseccion_up,
-                        color="#0D3580", label="Incertidumbre de la predicción", alpha=0.3)
-        plt.plot(periodo, pendiente*prediccion+interseccion, color="black", label="Predicción")
+                        color="#0D3580", label="Uncertainty", alpha=0.3)
+        
+        plt.plot(periodo, pendiente*prediccion+interseccion, color="black", label="Prediction")
 
     except:
         ax.vlines(periodo[0],
@@ -213,18 +219,24 @@ def predicciones_graficas(eje_x, datos, cota_inferior, prediccion, cota_superior
                 linestyles ="dotted", colors ="#0D3580",label=ultima_fecha)
 
         ax.fill_between(periodo, cota_inferior, cota_superior, color="#1761B0",
-                    edgecolor="0.5", label="Cotas", alpha=0.25)
-        plt.plot(periodo, prediccion, color="black", label="Predicción")
+                    edgecolor="0.5", label="Error bounds", alpha=0.25)
+        plt.ylim([1.2*cota_inferior[-1],1.2*cota_superior[-1]])
+        plt.plot(periodo, prediccion, color="black", label="Prediction")
     
     
     
     plt.scatter(eje_x, datos[numero_datos-30:], c="r", marker=".")
 
-    plt.xlabel("Días")
+    plt.xlabel("Days")
     plt.ylabel(etiquetas["nombre"])
-    plt.title(etiquetas["nombre"]+" en función de los días transcurridos")
+    plt.title(etiquetas["nombre"]+" in function of the day")
     plt.legend(loc="upper left")
 
     plt.show()
 
 
+def confidence_interval_experimental(data, confidence_inverval = 0.95):
+  
+  intervals = t.interval(0.95,len(data)-1,loc = np.mean(data),scale = st.sem(data))
+  print(intervals)
+  return ( np.array([intervals[1] for i in data ]), np.array([intervals[0] for i in data ])  )
