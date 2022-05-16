@@ -6,9 +6,13 @@ from scipy.stats import t
 
 
 # Se lee la base de datos
-f = "GtoDatOK150322 - GtoDatOK291020.csv"
-df = pd.read_csv(f, header=1) #Para Guanajuato: 1; Para México: 0
+f = "Mex_05_05_2022.csv"
+df = pd.read_csv(f, header=0) #Para Guanajuato: 1; Para México: 0
 df.head()
+mex = True
+if mex : df["Vacunados"] = [i for i in df["Positivos"]]
+
+
 
 # Se leen las listas de recuperados, difuntos e infectados acumulados
 infectados_acumulados = np.array( pd.to_numeric(df["Positivos"]).sort_values() )
@@ -60,7 +64,7 @@ parametros_vacuna,vacuna_error=Poblacion.vaccunation_vel()
 
 
 # Parámetros del sistema
-poblacion_total = 6.0e6 #Para Guanajuato: 6.0e6; Para México: 128.9e6
+poblacion_total = 128.9e6 #Para Guanajuato: 6.0e6; Para México: 128.9e6
 tasa_deteccion = 0.1
 tasa_deteccion_error = 0.0296
 

@@ -1,5 +1,4 @@
 #Importamos la libreria con nuestras funciones.
-from tkinter import N
 from Functions import *
 # Para análisis de datos
 import pandas as pd
