@@ -177,15 +177,11 @@ for inf, inm, g, b0, b1, k in product(Infectados, Inmunes, Gamma,
   tendencia_infectados = (infectados_activos[-1]-infectados_activos[-dias_de_analisis])/dias_de_analisis
   tendencia_prediccion = (pred_inf[-1]-infectados_activos[-1])/dias_a_predecir
 
-  ######################################################################
-  ######################################################################
-  ######################################################################
+
   ######################################################################
   # HIPOTESIS: EL LOGARITMO NO NECESARIAMENTE ES LOG2, SINO LOG BASE R_0
   ######################################################################
-  ######################################################################
-  ######################################################################
-  ######################################################################
+
   condicion_arriba_inf = (abs(tendencia_prediccion)<np.log2(dias_a_predecir)*abs(tendencia_infectados) and infectados_predichos[-1]<=pred_inf[-1])
   condicion_abajo_inf = (infectados_predichos[-1]>=pred_inf[-1] and (vector_menor_que_vector(np.zeros(len(pred_inf))-1, pred_inf)))
   if condicion_arriba_inf or condicion_abajo_inf: 
@@ -204,13 +200,6 @@ for inf, inm, g, b0, b1, k in product(Infectados, Inmunes, Gamma,
       error_inf_down = temp_inf
 
 reporte_eje_x = np.array( range(numero_datos-30, numero_datos) )
-
-
-#infectados_cota_superior,infectados_cota_inferior = confidence_interval_experimental(infectados_predichos)
-#recuperados_predichos = rho[0]*inmunes_predichos+rho[1]
-#difuntos_predichos = delta[0]*inmunes_predichos+delta[1]
-#recuperados_cota_superior , recuperados_cota_inferior = confidence_interval_experimental(recuperados_predichos)
-#difuntos_cota_superior , difuntos_cota_inferior = confidence_interval_experimental(difuntos_predichos)
 
 
 if dias_de_corte>0:
@@ -254,7 +243,7 @@ else:
   predicciones_graficas(reporte_eje_x, difuntos_acumulados,
                       inmunes_cota_inferior, inmunes_predichos,
                       inmunes_cota_superior, periodo_de_prediccion,
-                      {"nombre": "Recovered",
+                      {"nombre": "Deceased",
                        "escala": delta,
                        "error": delta_error})
 rho_up = rho+rho_error

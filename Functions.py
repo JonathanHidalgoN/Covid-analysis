@@ -235,8 +235,3 @@ def predicciones_graficas(eje_x, datos, cota_inferior, prediccion, cota_superior
     plt.show()
 
 
-def confidence_interval_experimental(data, confidence_inverval = 0.95):
-  
-  intervals = t.interval(0.95,len(data)-1,loc = np.mean(data),scale = st.sem(data))
-  print(intervals)
-  return ( np.array([intervals[1] for i in data ]), np.array([intervals[0] for i in data ])  )
