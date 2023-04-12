@@ -1,22 +1,7 @@
-from Population import Population
-from itertools import product
+from Rates import Rate
 import typing
 import numpy as np
-
-# scipy just for curve_fit
 from scipy.optimize import curve_fit
-import abc
-
-
-class Rate(abc.ABC):
-    @abc.abstractmethod
-    def compute_rate_with_error(self):
-        pass
-
-    @abc.abstractmethod
-    def plot_rate(self):
-        pass
-
 
 class EffectiveInfectionRate(Rate):
 
@@ -98,23 +83,4 @@ class EffectiveInfectionRate(Rate):
         return gamma, gamma_error
 
     def plot_rate(self, plotter=None):
-        print("here is an object to plot")
-
-
-if __name__ == "__main__":
-    from DataFormater import DataFormater
-
-    path = "GtoDatOK150322 - GtoDatOK291020.csv"
-    data_reader = DataFormater(path)
-    GTO_POPULATION = 6.167e6
-    params = {
-        "population": GTO_POPULATION,
-        "infected_people": data_reader.read_col(3, True, 2),
-        "dead_people": data_reader.read_col(4, True, 2),
-        "recovered_people": data_reader.read_col(5, True, 2),
-        "vaccinated_people": data_reader.read_col(6, True, 2),
-    }
-    population = Population(**params)
-    infecion_rate = EffectiveInfectionRate(
-        population.active_infected_people, population.inmune_people
-    ).compute_rate_with_error()
+        plotter(self._xaxis, self._yaxis).plot()
