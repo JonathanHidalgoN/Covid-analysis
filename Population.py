@@ -1,48 +1,101 @@
-import typing 
+from numpy import array as np_array
+from numpy import int32 as np_int32
 
-class Population():
-    
+
+class Population:
+
     """
-    A class to represent a population of people.
-    Attributes
-        pop_size(int): The total population size
-        infected_pop(int): The number of infected people in the population
-        recovered_pop(int): The number of recovered people in the population
-        dead_pop(int): The number of dead people in the population
-        dates(list): A list of dates for which the population data is available
+    This class represents the population of the simulation.
+    Attributes:
+        population (int): The population of the simulation.
+        infected_people (np_array(np_int32)): The number of infected people in the simulation.
+        dead_people (np_array(np_int32)): The number of dead people in the simulation.
+        recovered_people (np_array(np_int32)): The number of recovered people in the simulation.
+        vaccinated_people (np_array(np_int32)): The number of vaccinated people in the simulation.
     """
-    
-    def __init__(self, pop_size: int,
-                    infected_pop: int,
-                    recovered_pop: int,
-                    dead_pop: int,
-                    dates = typing.List[str]):
-        
-        assert pop_size == infected_pop + recovered_pop + dead_pop, "Population size must be equal to the sum of infected, recovered and dead populations"
-        self._pop_size = pop_size
-        self._infected_pop = infected_pop
-        self._recovered_pop = recovered_pop
-        self._dead_pop = dead_pop
-        self._dates = dates
+
+    def __init__(
+        self,
+        population: int,
+        infected_people: np_array(np_int32),
+        dead_people: np_array(np_int32),
+        recovered_people: np_array(np_int32),
+        vaccinated_people: np_array(np_int32),
+    ):
+        self._population = population
+        self._infected_people = infected_people
+        self._dead_people = dead_people
+        self._recovered_people = recovered_people
+        self._vaccinated_people = vaccinated_people
+        self._check_length()
 
     @property
-    def pop_size(self) -> int:
-        return self._pop_size
-    
-    @property
-    def infected_pop(self) -> int:
-        return self._infected_pop
-    
-    @property
-    def recovered_pop(self) -> int:
-        return self._recovered_pop
-    
-    @property
-    def dead_pop(self) -> int:
-        return self._dead_pop
+    def population(self) -> int:
+        return self._population
 
     @property
-    def dates(self) -> typing.List[str]:
-        return self._dates
-    
-    
+    def infected_people(self) -> np_array(np_int32):
+        return self._infected_people
+
+    @property
+    def dead_people(self) -> np_array(np_int32):
+        return self._dead_people
+
+    @property
+    def recovered_people(self) -> np_array(np_int32):
+        return self._recovered_people
+
+    @property
+    def vaccinated_people(self) -> np_array(np_int32):
+        return self._vaccinated_people
+
+    def _check_length(self) -> None:
+        """
+        This method checks if the length of the infected, dead, recovered and vaccinated people are equal.
+        """
+        # len(np_array) is not that fast, maybe change it.
+        len_infected = len(self._infected_people)
+        len_dead = len(self._dead_people)
+        len_recovered = len(self._recovered_people)
+        len_vaccinated = len(self._vaccinated_people)
+        assert len_infected == len_dead == len_recovered == len_vaccinated
+
+    @population.setter
+    def population(self, population: int) -> None:
+        assert population > 0
+        self._population = population
+
+    @infected_people.setter
+    def infected_people(self, infected_people: np_array(np_int32)) -> None:
+        self._infected_people = infected_people
+        self._check_length()
+
+    @dead_people.setter
+    def dead_people(self, dead_people: np_array(np_int32)) -> None:
+        self._dead_people = dead_people
+        self._check_length()
+
+    @recovered_people.setter
+    def recovered_people(self, recovered_people: np_array(np_int32)) -> None:
+        self._recovered_people = recovered_people
+        self._check_length()
+
+
+if __name__ == "__main__":
+    population = Population(
+        population=12,
+        infected_people=np_array([1, 2, 3], dtype=np_int32),
+        dead_people=np_array([1, 2, 3], dtype=np_int32),
+        recovered_people=np_array([1, 2, 3], dtype=np_int32),
+        vaccinated_people=np_array([1, 2, 3], dtype=np_int32),
+    )
+    population.infected_people = np_array([1, 2, 4], dtype=np_int32)
+    try:
+        population.infected_people = np_array([1, 2, 4, 5], dtype=np_int32)
+    except AssertionError:
+        print("AssertionError")
+    try:
+        population.population = -1
+    except AssertionError:
+        print("AssertionError")
+    print("Done")
