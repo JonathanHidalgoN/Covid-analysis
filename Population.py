@@ -52,6 +52,14 @@ class Population:
         return self._infected_people - self._inmune_people
 
     @property
+    def active_infected_people(self) -> np_array(np_int32):
+        return self._active_infected_people
+    
+    @property
+    def inmune_people(self) -> np_array(np_int32):
+        return self._inmune_people
+
+    @property
     def data_points(self) -> int:
         return self._data_points
 
