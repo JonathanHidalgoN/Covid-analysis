@@ -30,6 +30,26 @@ class Population:
         self._vaccinated_people = vaccinated_people
         self._check_length()
         self._data_points = len(infected_people)
+        self._inmune_people = self._compute_inmune_people()
+        self._active_infected_people = self._compute_active_infected_people() 
+
+    def _compute_inmune_people(self) -> np_array(np_int32):
+        """
+        This method computes the number of inmune people.
+        Returns:
+            np_array(np_int32): The number of inmune people.
+        """
+        #Dont know if this is correct
+        #return self._vaccinated_people + self._recovered_people + self._dead_people
+        return self._recovered_people + self._dead_people
+
+    def _compute_active_infected_people(self) -> np_array(np_int32):
+        """
+        This method computes the number of active infected people.
+        Returns:
+            np_array(np_int32): The number of active infected people.
+        """
+        return self._infected_people - self._inmune_people
 
     @property
     def data_points(self) -> int:
