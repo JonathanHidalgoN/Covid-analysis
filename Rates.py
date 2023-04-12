@@ -2,12 +2,13 @@ from Population import Population
 from itertools import product
 import typing
 import numpy as np
-#scipy just for curve_fit
+
+# scipy just for curve_fit
 from scipy.optimize import curve_fit
 import abc
 
-class Rate(abc.ABC):
 
+class Rate(abc.ABC):
     @abc.abstractmethod
     def compute_rate_with_error(self):
         pass
@@ -16,20 +17,51 @@ class Rate(abc.ABC):
     def plot_rate(self):
         pass
 
+
 class EffectiveInfectionRate(Rate):
 
     """
     This class represents the effective infection rate.
     Attributes:
+        active_infected_people (np.array): The number of active infected people.
+        inmune_people (np.array): The number of inmune people.
+        days_to_consider (int): The number of days to consider.
+        xaxis (np.array): The x axis of the effective infection rate.
+        yaxis (np.array): The y axis of the effective infection rate.
     """
 
-    def __init__(self, active_infected_people: np.array, inmune_people: np.array, days_to_consider: int = 150):
+    def __init__(
+        self,
+        active_infected_people: np.array,
+        inmune_people: np.array,
+        days_to_consider: int = 150,
+    ):
         self._inmune_people = inmune_people
         self._active_infected_people = active_infected_people
         self._data_points = len(active_infected_people)
         self._days_to_consider = days_to_consider
-        self._xaxis , self._yaxis = self._compute_axis()
-    
+        self._xaxis, self._yaxis = self._compute_axis()
+
+    @property
+    def xaxis(self):
+        return self._xaxis
+
+    @property
+    def yaxis(self):
+        return self._yaxis
+
+    @property
+    def active_infected_people(self):
+        return self._active_infected_people
+
+    @property
+    def inmune_people(self):
+        return self._inmune_people
+
+    @property
+    def days_to_consider(self):
+        return self._days_to_consider
+
     def _compute_axis(self) -> typing.Tuple[np.array, np.array]:
         """
         This method computes the axis of the effective infection rate.
@@ -38,7 +70,9 @@ class EffectiveInfectionRate(Rate):
         Returns:
             typing.Tuple[np.array, np.array]: The axis of the effective infection rate.
         """
-        x_axis = self._active_infected_people[self._data_points - self._days_to_consider - 1 :]
+        x_axis = self._active_infected_people[
+            self._data_points - self._days_to_consider - 1 :
+        ]
         y_axis = np.diff(
             self._inmune_people[self._data_points - self._days_to_consider - 2 :]
         )
@@ -46,7 +80,7 @@ class EffectiveInfectionRate(Rate):
 
     @staticmethod
     def _proportionality(x, a):
-        return a * x 
+        return a * x
 
     def compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
@@ -54,30 +88,33 @@ class EffectiveInfectionRate(Rate):
         Returns:
             typing.Tuple[float, float]: The effective infection rate with its error.
         """
-        gamma, gamma_var = curve_fit(self._proportionality,
-                            self._xaxis,
-                            self._yaxis,
+        gamma, gamma_var = curve_fit(
+            self._proportionality,
+            self._xaxis,
+            self._yaxis,
         )
         gamma = gamma[0]
         gamma_error = np.sqrt(gamma_var[0][0])
         return gamma, gamma_error
-        
-    def plot_rate(self, plotter = None):
-        print("here is an object to plot")    
-                          
+
+    def plot_rate(self, plotter=None):
+        print("here is an object to plot")
 
 
 if __name__ == "__main__":
     from DataFormater import DataFormater
+
     path = "GtoDatOK150322 - GtoDatOK291020.csv"
     data_reader = DataFormater(path)
     GTO_POPULATION = 6.167e6
     params = {
         "population": GTO_POPULATION,
-        "infected_people": data_reader.read_col(3,True,2),
-        "dead_people": data_reader.read_col(4,True,2),
-        "recovered_people": data_reader.read_col(5,True,2),
-        "vaccinated_people": data_reader.read_col(6,True,2),
+        "infected_people": data_reader.read_col(3, True, 2),
+        "dead_people": data_reader.read_col(4, True, 2),
+        "recovered_people": data_reader.read_col(5, True, 2),
+        "vaccinated_people": data_reader.read_col(6, True, 2),
     }
     population = Population(**params)
-    infecion_rate = EffectiveInfectionRate(population.active_infected_people, population.inmune_people).compute_rate_with_error()
+    infecion_rate = EffectiveInfectionRate(
+        population.active_infected_people, population.inmune_people
+    ).compute_rate_with_error()
