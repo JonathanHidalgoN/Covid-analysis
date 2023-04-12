@@ -9,18 +9,21 @@ class Population():
         infected_pop(int): The number of infected people in the population
         recovered_pop(int): The number of recovered people in the population
         dead_pop(int): The number of dead people in the population
+        dates(list): A list of dates for which the population data is available
     """
     
     def __init__(self, pop_size: int,
                     infected_pop: int,
                     recovered_pop: int,
-                    dead_pop: int):
+                    dead_pop: int,
+                    dates = typing.List[str]):
         
         assert pop_size == infected_pop + recovered_pop + dead_pop, "Population size must be equal to the sum of infected, recovered and dead populations"
         self._pop_size = pop_size
         self._infected_pop = infected_pop
         self._recovered_pop = recovered_pop
         self._dead_pop = dead_pop
+        self._dates = dates
 
     @property
     def pop_size(self) -> int:
@@ -38,3 +41,8 @@ class Population():
     def dead_pop(self) -> int:
         return self._dead_pop
 
+    @property
+    def dates(self) -> typing.List[str]:
+        return self._dates
+    
+    
