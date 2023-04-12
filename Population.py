@@ -12,6 +12,7 @@ class Population:
         dead_people (np_array(np_int32)): The number of dead people in the simulation.
         recovered_people (np_array(np_int32)): The number of recovered people in the simulation.
         vaccinated_people (np_array(np_int32)): The number of vaccinated people in the simulation.
+        data_points (int): The number of data points in the simulation.
     """
 
     def __init__(
@@ -28,6 +29,11 @@ class Population:
         self._recovered_people = recovered_people
         self._vaccinated_people = vaccinated_people
         self._check_length()
+        self._data_points = len(infected_people)
+
+    @property
+    def data_points(self) -> int:
+        return self._data_points
 
     @property
     def population(self) -> int:
