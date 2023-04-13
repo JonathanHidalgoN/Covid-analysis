@@ -14,6 +14,15 @@ class Rate(abc.ABC):
 
     def __init__(self):
         self._xaxis, self._yaxis = self._compute_axis()
+        self._check_length()
+        self.data_points = len(self._xaxis)
+
+    def _check_length(self):
+        """
+        This method checks if the x and y axis have the same length.
+        """
+        if len(self._xaxis) != len(self._yaxis):
+            raise ValueError("The x and y axis must have the same length.")
 
     @abc.abstractmethod
     def compute_rate_with_error(self):
@@ -55,6 +64,8 @@ class Rate(abc.ABC):
             plt.xlabel(tags[1])
             plt.ylabel(tags[2])
             plt.legend()
-        
+
         plt.show()
     
+    def _compute_confidence_interval(self, ):
+        pass
