@@ -1,6 +1,4 @@
 from Rates import Rate
-import typing
-import numpy as np
 from scipy.optimize import curve_fit
 
 class EffectiveInfectionRate(Rate):
