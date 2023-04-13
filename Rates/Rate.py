@@ -1,6 +1,6 @@
 import abc
 import matplotlib.pyplot as plt
-from typing import Callable
+import typing
 import numpy as np
 
 class Rate(abc.ABC):
@@ -16,10 +16,10 @@ class Rate(abc.ABC):
         confidence_interval (np.array): The confidence interval of the rate.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._ready = False
 
-    def _check_setup(self):
+    def _check_setup(self) -> typing.Union[None, str]:
         """
         This method checks if the rate is set up.
         """
@@ -69,7 +69,7 @@ class Rate(abc.ABC):
         return self._error
 
     @property
-    def fit(self) -> Callable[[float]]:
+    def fit(self) -> typing.Callable[[float]]:
         """
         This method returns the fit of the rate.
         Returns:
@@ -88,7 +88,7 @@ class Rate(abc.ABC):
         self._check_setup()
         return self._confidence_interval
 
-    def set_up(self):
+    def set_up(self) -> None:
         """
         This method sets up the rate.
         """
@@ -100,7 +100,7 @@ class Rate(abc.ABC):
         self._confidence_interval = self._compute_confidence_interval()
         self._ready = True
 
-    def _check_length(self):
+    def _check_length(self) -> None:
         """
         This method checks if the x and y axis have the same length.
         """
@@ -108,7 +108,7 @@ class Rate(abc.ABC):
             raise ValueError("The x and y axis must have the same length.")
 
     @abc.abstractmethod
-    def _compute_fit(self)-> Callable[[float]]:
+    def _compute_fit(self)-> typing.Callable[[float]]:
         """
         This method returns the fit of the rate.
         Returns:
@@ -117,7 +117,7 @@ class Rate(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def _compute_rate_with_error(self):
+    def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
         This method computes the rate with error.
         Returns:
@@ -127,7 +127,7 @@ class Rate(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def _compute_axis(self):
+    def _compute_axis(self) -> typing.Tuple[np.array, np.array]:
         """
         This method computes the axis of the rate.
         Returns:
@@ -136,7 +136,7 @@ class Rate(abc.ABC):
         """
         pass
 
-    def plot_rate(self, function : Callable[[float]], tags : list[str] = None) -> None:
+    def plot_rate(self, tags : list[str] = None) -> None:
         """
         This method plots the rate.
         Args:
@@ -144,7 +144,7 @@ class Rate(abc.ABC):
             tags (list[str]): The tags for the plot [title,x_axis_name, y_axis_name].
         """
         x_cont = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
-        y_function = function(x_cont)
+        y_function = self._fit(x_cont)
 
         fig , ax = plt.subplots()
 
