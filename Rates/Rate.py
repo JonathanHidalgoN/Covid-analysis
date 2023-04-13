@@ -24,6 +24,16 @@ class Rate(abc.ABC):
         if len(self._xaxis) != len(self._yaxis):
             raise ValueError("The x and y axis must have the same length.")
 
+    @property
+    @abc.abstractmethod
+    def fit(self)-> Callable[[float]]:
+        """
+        This method returns the fit of the rate.
+        Returns:
+            Callable[[float]]: The fit of the rate.
+        """
+        pass
+    
     @abc.abstractmethod
     def compute_rate_with_error(self):
         """
