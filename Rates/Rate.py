@@ -1,5 +1,7 @@
 import abc
-
+import matplotlib.pyplot as plt
+from typing import Callable
+import numpy as np
 
 class Rate(abc.ABC):
 
@@ -9,6 +11,9 @@ class Rate(abc.ABC):
         xaxis (np.array): The x axis of the rate.
         yaxis (np.array): The y axis of the rate.
     """
+
+    def __init__(self):
+        self._xaxis, self._yaxis = self._compute_axis()
 
     @abc.abstractmethod
     def compute_rate_with_error(self):
@@ -30,9 +35,26 @@ class Rate(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod
-    def plot_rate(self):
+    def plot_rate(self, function : Callable[[float]], tags : list[str] = None) -> None:
         """
         This method plots the rate.
+        Args:
+            function (Callable[[float]]): The function to plot.
+            tags (list[str]): The tags for the plot [title,x_axis_name, y_axis_name].
         """
-        pass
+        x_cont = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
+        y_function = function(x_cont)
+
+        fig , ax = plt.subplots()
+
+        plt.scatter(self._xaxis, self._yaxis, label="Data", c = "red", marker = ".")
+        plt.plot(x_cont, y_function, label="Fit", c = "black")
+
+        if tags is not None:
+            plt.title(tags[0])
+            plt.xlabel(tags[1])
+            plt.ylabel(tags[2])
+            plt.legend()
+        
+        plt.show()
+    
