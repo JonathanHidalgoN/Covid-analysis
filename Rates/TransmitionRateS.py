@@ -16,7 +16,7 @@ class TransmitionRateS(Rate):
     def __init__(self,active_infected_people: np.array(np.int32), 
                  gamma,
                  days_to_consider: int = 30,
-                ):
+                ) -> None:
         self._active_infected_people = active_infected_people
         self._days_to_consider = days_to_consider
         self._gamma = gamma
@@ -24,7 +24,7 @@ class TransmitionRateS(Rate):
         super().__init__()
 
     @property
-    def days_to_consider(self):
+    def days_to_consider(self) -> int:
         return self._days_to_consider
     
     def _compute_axis(self) -> typing.Tuple[np.array, np.array]:
@@ -46,7 +46,7 @@ class TransmitionRateS(Rate):
         return self._filter_low_values(x_axis,y_axis)
 
     @staticmethod
-    def _filter_low_values(x,y,tolerance : float = 1e-8):
+    def _filter_low_values(x,y,tolerance : float = 1e-8) -> typing.Tuple[np.array, np.array]:
         """
         This method filters the low values of the transmition rate.
         Args:

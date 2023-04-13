@@ -28,7 +28,7 @@ class EffectiveInfectionRate(Rate):
         super().__init__()
 
     @property
-    def days_to_consider(self):
+    def days_to_consider(self) -> int:
         return self._days_to_consider
 
     def _compute_axis(self) -> typing.Tuple[np.array, np.array]:
@@ -48,7 +48,7 @@ class EffectiveInfectionRate(Rate):
         return x_axis, y_axis
 
     @staticmethod
-    def _proportionality(x, a):
+    def _proportionality(x, a) -> float:
         return a * x
 
     def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
