@@ -6,7 +6,7 @@ import numpy as np
 class Rate(abc.ABC):
 
     """
-    This class represents a rate, it is an abstract class.
+    This class represents a rate.
     Attributes:
         xaxis (np.array): The x axis of the rate.
         yaxis (np.array): The y axis of the rate.
@@ -67,5 +67,16 @@ class Rate(abc.ABC):
 
         plt.show()
     
-    def _compute_confidence_interval(self, ):
+    def _compute_confidence_interval(self, function : Callable[[float]]) -> tuple[float, float]:
+        """
+        This method computes the confidence interval.
+        Args:
+            function (Callable[[float]]): The function to plot.
+            x (float): The x value.
+            error (float): The error of the rate.
+        Returns:
+            tuple[float, float]: The confidence interval.
+        """
+        x_cont = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
+        y_function = function(x_cont)
         pass
