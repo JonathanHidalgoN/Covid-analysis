@@ -1,6 +1,7 @@
 from Rates import Rate
 from scipy.optimize import curve_fit
 
+
 class EffectiveInfectionRate(Rate):
 
     """
@@ -63,4 +64,3 @@ class EffectiveInfectionRate(Rate):
         gamma = gamma[0]
         gamma_error = np.sqrt(gamma_var[0][0])
         return gamma, gamma_error
-

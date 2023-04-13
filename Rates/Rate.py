@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import typing
 import numpy as np
 
+
 class Rate(abc.ABC):
 
     """
@@ -24,7 +25,7 @@ class Rate(abc.ABC):
         This method checks if the rate is set up.
         """
         if not self._ready:
-            #I  dont like to return a string, but raise an exception is not a good idea
+            # I  dont like to return a string, but raise an exception is not a good idea
             return "The rate is not set up. Please call the method set_up() before using the rate."
 
     @property
@@ -36,7 +37,6 @@ class Rate(abc.ABC):
         """
         self._check_setup()
         return self._xaxis
-
 
     @property
     def yaxis(self) -> np.array:
@@ -77,7 +77,7 @@ class Rate(abc.ABC):
         """
         self._check_setup()
         return self._fit
-    
+
     @property
     def confidence_interval(self) -> np.array:
         """
@@ -108,14 +108,14 @@ class Rate(abc.ABC):
             raise ValueError("The x and y axis must have the same length.")
 
     @abc.abstractmethod
-    def _compute_fit(self)-> typing.Callable[[float]]:
+    def _compute_fit(self) -> typing.Callable[[float]]:
         """
         This method returns the fit of the rate.
         Returns:
             Callable[[float]]: The fit of the rate.
         """
         pass
-    
+
     @abc.abstractmethod
     def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
@@ -136,7 +136,7 @@ class Rate(abc.ABC):
         """
         pass
 
-    def plot_rate(self, tags : list[str] = None) -> None:
+    def plot_rate(self, tags: list[str] = None) -> None:
         """
         This method plots the rate.
         Args:
@@ -146,10 +146,10 @@ class Rate(abc.ABC):
         x_cont = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
         y_function = self._fit(x_cont)
 
-        fig , ax = plt.subplots()
+        fig, ax = plt.subplots()
 
-        plt.scatter(self._xaxis, self._yaxis, label="Data", c = "red", marker = ".")
-        plt.plot(x_cont, y_function, label="Fit", c = "black")
+        plt.scatter(self._xaxis, self._yaxis, label="Data", c="red", marker=".")
+        plt.plot(x_cont, y_function, label="Fit", c="black")
 
         if tags is not None:
             plt.title(tags[0])
@@ -158,7 +158,7 @@ class Rate(abc.ABC):
             plt.legend()
 
         plt.show()
-    
+
     def _compute_confidence_interval(self) -> tuple[float, float]:
         """
         This method computes the confidence interval.
