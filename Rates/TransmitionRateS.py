@@ -18,24 +18,11 @@ class TransmitionRateS(Rate):
                  days_to_consider: int = 30,
                 ):
         self._active_infected_people = active_infected_people
-        self._data_points = len(active_infected_people)
         self._days_to_consider = days_to_consider
-        self._xaxis, self._yaxis = self._compute_axis()
         self._gamma = gamma
+        # Call the parent constructor
+        super().__init__()
 
-
-    @property
-    def xaxis(self):
-        return self._xaxis
-    
-    @property
-    def yaxis(self):    
-        return self._yaxis
-    
-    @property
-    def infected_people(self):
-        return self._infected_people
-    
     @property
     def days_to_consider(self):
         return self._days_to_consider
@@ -70,7 +57,7 @@ class TransmitionRateS(Rate):
         y = np.delete(y,index)
         return x,y
         
-    def compute_rate_with_error(self) -> typing.Tuple[float, float]:
+    def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
         Computes the transmition rate with the error.
         Returns:
@@ -81,5 +68,4 @@ class TransmitionRateS(Rate):
         beta_error = np.sqrt(np.diag(beta_var))
         return beta, beta_error
     
-    def plot_rate(self):
-        pass
+    

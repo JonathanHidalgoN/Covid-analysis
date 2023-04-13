@@ -23,25 +23,9 @@ class EffectiveInfectionRate(Rate):
     ):
         self._inmune_people = inmune_people
         self._active_infected_people = active_infected_people
-        self._data_points = len(active_infected_people)
         self._days_to_consider = days_to_consider
-        self._xaxis, self._yaxis = self._compute_axis()
-
-    @property
-    def xaxis(self):
-        return self._xaxis
-
-    @property
-    def yaxis(self):
-        return self._yaxis
-
-    @property
-    def active_infected_people(self):
-        return self._active_infected_people
-
-    @property
-    def inmune_people(self):
-        return self._inmune_people
+        # Call the parent constructor
+        super().__init__()
 
     @property
     def days_to_consider(self):
@@ -67,7 +51,7 @@ class EffectiveInfectionRate(Rate):
     def _proportionality(x, a):
         return a * x
 
-    def compute_rate_with_error(self) -> typing.Tuple[float, float]:
+    def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
         This method computes the effective infection rate with its error.
         Returns:
@@ -82,5 +66,3 @@ class EffectiveInfectionRate(Rate):
         gamma_error = np.sqrt(gamma_var[0][0])
         return gamma, gamma_error
 
-    def plot_rate(self, plotter=None):
-        plotter(self._xaxis, self._yaxis).plot()
