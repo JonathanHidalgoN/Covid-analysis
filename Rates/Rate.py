@@ -61,7 +61,7 @@ class Rate(abc.ABC):
         return self._error
 
     @property
-    def fit(self) -> typing.Callable[[float]]:
+    def fit(self) -> typing.Callable[[float], float]:
         """
         This method returns the fit of the rate.
         Returns:
@@ -167,5 +167,5 @@ class Rate(abc.ABC):
             tuple[float, float]: The confidence interval.
         """
         x_cons = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
-        y_function = function(x_cons)
+        y_function = self._fit(x_cons)
         return None
