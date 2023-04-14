@@ -20,14 +20,6 @@ class Rate(abc.ABC):
     def __init__(self) -> None:
         self._ready = False
 
-    def _check_setup(self) -> typing.Union[None, str]:
-        """
-        This method checks if the rate is set up.
-        """
-        if not self._ready:
-            # I  dont like to return a string, but raise an exception is not a good idea
-            return "The rate is not set up. Please call the method set_up() before using the rate."
-
     @property
     def xaxis(self) -> np.array:
         """
@@ -88,31 +80,12 @@ class Rate(abc.ABC):
         self._check_setup()
         return self._confidence_interval
 
-    def set_up(self) -> None:
-        """
-        This method sets up the rate.
-        """
-        self._xaxis, self._yaxis = self._compute_axis()
-        self._check_length()
-        self._data_points = len(self._xaxis)
-        self._rate, self._error = self._compute_rate_with_error()
-        self._fit = self._compute_fit()
-        self._confidence_interval = self._compute_confidence_interval()
-        self._ready = True
-
-    def _check_length(self) -> None:
-        """
-        This method checks if the x and y axis have the same length.
-        """
-        if len(self._xaxis) != len(self._yaxis):
-            raise ValueError("The x and y axis must have the same length.")
-
     @abc.abstractmethod
-    def _compute_fit(self) -> typing.Callable[[float]]:
+    def _compute_fit(self) -> typing.Callable[[float], float]:
         """
         This method returns the fit of the rate.
         Returns:
-            Callable[[float]]: The fit of the rate.
+            Callable[[float], float]: The fit of the rate.
         """
         pass
 
@@ -135,6 +108,34 @@ class Rate(abc.ABC):
             y_axis (np.array): The y axis of the rate.
         """
         pass
+
+    def _check_setup(self) -> typing.Union[None, str]:
+        """
+        This method checks if the rate is set up.
+        """
+        if not self._ready:
+            # I  dont like to return a string, but raise an exception is not a good idea
+            return "The rate is not set up. Please call the method set_up() before using the rate."
+
+
+    def set_up(self) -> None:
+        """
+        This method sets up the rate.
+        """
+        self._xaxis, self._yaxis = self._compute_axis()
+        self._check_length()
+        self._data_points = len(self._xaxis)
+        self._rate, self._error = self._compute_rate_with_error()
+        self._fit = self._compute_fit()
+        self._confidence_interval = self._compute_confidence_interval()
+        self._ready = True
+
+    def _check_length(self) -> None:
+        """
+        This method checks if the x and y axis have the same length.
+        """
+        if len(self._xaxis) != len(self._yaxis):
+            raise ValueError("The x and y axis must have the same length.")
 
     def plot_rate(self, tags: list[str] = None) -> None:
         """
@@ -167,4 +168,4 @@ class Rate(abc.ABC):
         """
         x_cons = np.linspace(self._xaxis.min(), self._xaxis.max(), endpoint=True)
         y_function = function(x_cons)
-        pass
+        return None
