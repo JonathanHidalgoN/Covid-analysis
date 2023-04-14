@@ -1,5 +1,6 @@
-from Rate import Rate
-
+from Rates.Rate import Rate
+import numpy as np
+import typing
 
 class TransmitionRateS(Rate):
 

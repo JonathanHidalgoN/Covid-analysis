@@ -1,8 +1,8 @@
-from Rates import Rate
+from Rates.Rate import Rate
 from scipy.optimize import curve_fit
 
-# import numpy as np
-# import typing
+import numpy as np
+import typing
 
 
 class EffectiveInfectionRate(Rate):
