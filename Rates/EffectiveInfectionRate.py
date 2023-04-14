@@ -1,6 +1,9 @@
 from Rates import Rate
 from scipy.optimize import curve_fit
 
+# import numpy as np
+# import typing
+
 
 class EffectiveInfectionRate(Rate):
 
@@ -26,6 +29,10 @@ class EffectiveInfectionRate(Rate):
         # Call the parent constructor
         super().__init__()
 
+    @staticmethod
+    def _proportionality(x, a) -> float:
+        return a * x
+
     @property
     def days_to_consider(self) -> int:
         return self._days_to_consider
@@ -46,9 +53,15 @@ class EffectiveInfectionRate(Rate):
         )
         return x_axis, y_axis
 
-    @staticmethod
-    def _proportionality(x, a) -> float:
-        return a * x
+    def _compute_fit(self) -> typing.Callable[[float], float]:
+        """
+        This method computes the fit of the effective infection rate.
+        Returns:
+            typing.Callable[[float], float]: The fit of the effective infection rate.
+        """
+        # We always use linear fit, maybe future versions will use other fits
+        linear_fit = lambda x: self._rate * x
+        return linear_fit
 
     def _compute_rate_with_error(self) -> typing.Tuple[float, float]:
         """
